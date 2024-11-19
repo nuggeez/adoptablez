@@ -3,13 +3,13 @@ import { View, Text, StyleSheet } from 'react-native';
 import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 
-export default function Feed() {
+export default function Preferences() {
   const theme = useTheme();
 
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
-        <Text style={styles.feedText}>Feed</Text>
+        <Text style={styles.signupText}>Preferences</Text>
       </View>
     </SafeAreaView>
   );
@@ -27,7 +27,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
   },
-  feedText: {
+  signupText: {
     fontSize: 24, // Adjust font size as needed
   },
 });

@@ -10,7 +10,10 @@ import * as SplashScreen from 'expo-splash-screen';
 import Splash from './components/Splash';
 import Login from './components/Login';
 import Signup from './components/Signup';
-import Feed from './components/Feed';
+import Options from './components/Options';
+import Preferences from './components/Preferences';
+import Lifestyle from './components/Lifestyle';
+import Main from './components/Main';
 
 const Stack = createNativeStackNavigator();
 
@@ -56,6 +59,7 @@ export default function App() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={theme}>
         <NavigationContainer>
+
           <Stack.Navigator initialRouteName="Splash">
             {isLoading ? (
               <Stack.Screen
@@ -76,13 +80,29 @@ export default function App() {
                   options={{ headerShown: false }}
                 />
                 <Stack.Screen
-                  name="Feed"
-                  component={Feed}
+                  name="Options"
+                  component={Options}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Preferences"
+                  component={Preferences}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Lifestyle"
+                  component={Lifestyle}
+                  options={{ headerShown: false }}
+                />
+                <Stack.Screen
+                  name="Main"
+                  component={Main}
                   options={{ headerShown: false }}
                 />
               </>
             )}
           </Stack.Navigator>
+
         </NavigationContainer>
       </PaperProvider>
     </GestureHandlerRootView>

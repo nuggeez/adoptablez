@@ -1,157 +1,223 @@
-import { useState, useEffect } from 'react';
-import { View, Text, StyleSheet, Image, KeyboardAvoidingView, Platform, Keyboard, TouchableOpacity } from 'react-native';
-import { useTheme, TextInput, Checkbox, HelperText } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { ScrollView } from 'react-native-gesture-handler';
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  Text,
+  StyleSheet,
+  TouchableOpacity,
+  ImageBackground,
+} from "react-native";
+import {
+  useTheme,
+  TextInput,
+  Checkbox,
+  Dialog,
+  Portal,
+} from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import * as Font from "expo-font";
+import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 
-export default function Login({navigation}) {
+export default function Login({ navigation }) {
   const theme = useTheme();
 
-  const [userData, setUserData] = useState({
+  const [fontsLoaded, setFontsLoaded] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordVisible, setPasswordVisible] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
+  const [dialogVisible, setDialogVisible] = useState(false);
+
+  const [errors, setErrors] = useState({
     email: "",
     password: "",
   });
-  const [emailError, setEmailError] = useState("");
-  const [passwordError, setPasswordError] = useState("");
-  const [passwordVisible, setPasswordVisible] = useState(false);
-  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
-  const [rememberMe, setRememberMe] = useState(false);
 
   useEffect(() => {
-    const keyboardDidShowListener = Keyboard.addListener('keyboardDidShow', () => setKeyboardVisible(true));
-    const keyboardDidHideListener = Keyboard.addListener('keyboardDidHide', () => setKeyboardVisible(false));
-
-    return () => {
-      keyboardDidHideListener.remove();
-      keyboardDidShowListener.remove();
+    const loadFonts = async () => {
+      await Font.loadAsync({
+        Lilita: require("../assets/fonts/LilitaOne-Regular.ttf"),
+      });
+      setFontsLoaded(true);
     };
+    loadFonts();
   }, []);
+
+  useFocusEffect(
+    React.useCallback(() => {
+      // Reset errors when the screen is focused
+      setErrors({ email: "", password: "" });
+    }, [])
+  );
+
+  if (!fontsLoaded) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.loadingText}>Loading...</Text>
+      </View>
+    );
+  }
+
+  const validateInputs = () => {
+    let valid = true;
+    const newErrors = { email: "", password: "" };
+
+    if (!email) {
+      newErrors.email = "Email is required";
+      valid = false;
+    } else {
+      const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+      if (!emailRegex.test(email)) {
+        newErrors.email = "Please enter a valid email address";
+        valid = false;
+      }
+    }
+    if (!password) {
+      newErrors.password = "Password is required";
+      valid = false;
+    } else if (password.length < 6) {
+      newErrors.password = "Password must be at least 6 characters long";
+      valid = false;
+    }
+
+    setErrors(newErrors);
+    return valid;
+  };
 
   const handleRememberMe = () => {
     setRememberMe(!rememberMe);
   };
 
-  const handleEmailChange = (text) => {
-    setUserData({ ...userData, email: text });
-    if (text === "") {
-      setEmailError("");
-    } else if (!validateEmail(text)) {
-      setEmailError("Please enter a valid email address");
-    } else {
-      setEmailError("");
-    }
-  };
-
-  const validateEmail = (email) => {
-    const emailRegex = /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i;
-    return emailRegex.test(email);
-  };
-
-  const handlePasswordChange = (text) => {
-    setUserData({ ...userData, password: text });
-    if (text === "") {
-      setPasswordError("");
-    } else if (text.length < 6) {
-      setPasswordError("Password must be at least 6 characters");
-    } else {
-      setPasswordError("");
-    }
-  };
-
   const handleLogin = () => {
-    // Add your authentication logic here
-    navigation.navigate('Feed');
+    if (!validateInputs()) return;
+
+    const userData = { email, password };
+    console.log("User data:", userData);
+
+    setDialogVisible(true);
+    setEmail("");
+    setPassword("");
+    navigation.navigate("Main");
   };
 
-  const handleSignup = () => {
-    // Add your authentication logic here
-    navigation.navigate('Signup');
-  };
+  const hideDialog = () => setDialogVisible(false);
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-        style={styles.container}
-      >
-        <ScrollView contentContainerStyle={styles.scrollContainer} keyboardShouldPersistTaps="handled">
-          <View style={[styles.logoContainer, { backgroundColor: theme.colors.primary }]}>
-            <Image
-              source={require('../assets/Login/loginPawImage.png')}
-              style={styles.loginPawImage}
-              resizeMode='cover'
+      <View style={styles.container}>
+        <View style={styles.backgroundContainer}>
+          <ImageBackground
+            source={require("../assets/Login/loginPawImage.png")}
+            style={styles.loginPawImage}
+            resizeMode="cover"
+          >
+            <View style={styles.textOverlayContainer}>
+              <Text style={styles.welcomeBackText}>Welcome Back!</Text>
+              <Text style={styles.loginText}>Login to your account</Text>
+            </View>
+          </ImageBackground>
+        </View>
+
+        <View
+          style={[
+            styles.formContainer,
+            { backgroundColor: theme.colors.primary },
+          ]}
+        >
+          <View
+            style={[
+              styles.inputContainer,
+              { backgroundColor: theme.colors.primary },
+            ]}
+          >
+            <TextInput
+              label="Email"
+              value={email}
+              onChangeText={setEmail}
+              left={<TextInput.Icon icon="email" />}
+              mode="flat"
+              activeUnderlineColor="gray"
+              keyboardType="email-address"
+              style={[styles.input, errors.email && styles.errorInput]}
             />
-            <Text style={styles.welcomeBackText}>Welcome Back!</Text>
-            <Text style={styles.loginText}>Login to your account</Text>
+            {errors.email && (
+              <Text style={styles.errorText}>{errors.email}</Text>
+            )}
+
+            <TextInput
+              label="Password"
+              value={password}
+              onChangeText={setPassword}
+              secureTextEntry={!passwordVisible}
+              right={
+                <TextInput.Icon
+                  icon={passwordVisible ? "eye" : "eye-off"}
+                  color="black"
+                  onPress={() => setPasswordVisible(!passwordVisible)}
+                />
+              }
+              left={<TextInput.Icon icon="lock" />}
+              mode="flat"
+              activeUnderlineColor="gray"
+              style={[styles.input, errors.password && styles.errorInput]}
+            />
+            {errors.password && (
+              <Text style={styles.errorText}>{errors.password}</Text>
+            )}
           </View>
 
-          <View style={[styles.formContainer, { backgroundColor: theme.colors.primary }]}>
-            <View style={[styles.inputContainer, { backgroundColor: theme.colors.primary }]}>
-              <TextInput
-                label="Email"
-                value={userData.email}
-                onChangeText={handleEmailChange}
-                left={<TextInput.Icon icon="email" />}
-                mode='flat'
-                activeUnderlineColor='gray'
-                style={styles.input}
-              />
-              <HelperText type="error" visible={!!emailError} style={styles.errorText}>
-                {emailError}
-              </HelperText>
-
-              <TextInput
-                label="Password"
-                value={userData.password}
-                onChangeText={handlePasswordChange}
-                secureTextEntry={!passwordVisible}
-                right={
-                  <TextInput.Icon
-                    icon={passwordVisible ? "eye" : "eye-off"}
-                    color='black'
-                    onPress={() => setPasswordVisible(!passwordVisible)}
-                  />
-                }
-                left={<TextInput.Icon icon="lock" />}
-                mode='flat'
-                activeUnderlineColor='gray'
-                style={styles.input}
-              />
-              <HelperText type="error" visible={!!passwordError} style={styles.errorText}>
-                {passwordError}
-              </HelperText>
-            </View>
-
-            <View style={styles.rememberForgotContainer}>
-              <View style={styles.checkboxContainer}>
-                <TouchableOpacity style={styles.rememberCheck} onPress={handleRememberMe}>
-                  <Checkbox
-                    status={rememberMe ? 'checked' : 'unchecked'}
-                    onPress={handleRememberMe}
-                    color='gray'
-                    uncheckedColor='gray'
-                  />
-                  <Text style={styles.rememberText}>Remember me</Text>
-                </TouchableOpacity>
-              </View>
-              <TouchableOpacity>
-                <Text style={styles.forgotText}>Forgot Password</Text>
+          <View style={styles.rememberForgotContainer}>
+            <View style={styles.checkboxContainer}>
+              <TouchableOpacity
+                style={styles.rememberCheck}
+                onPress={handleRememberMe}
+              >
+                <Checkbox
+                  status={rememberMe ? "checked" : "unchecked"}
+                  onPress={handleRememberMe}
+                  color="gray"
+                  uncheckedColor="gray"
+                />
+                <Text style={styles.rememberText}>Remember me</Text>
               </TouchableOpacity>
             </View>
-
-            <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
-              <Text style={styles.loginButtonText}>Login</Text>
+            <TouchableOpacity>
+              <Text style={styles.forgotText}>Forgot Password</Text>
             </TouchableOpacity>
           </View>
+
+          <TouchableOpacity style={styles.loginButton} onPress={handleLogin}>
+            <Text style={styles.loginButtonText}>Login</Text>
+          </TouchableOpacity>
 
           <View style={styles.noAccountContainer}>
             <Text style={styles.noAccountText}>Don't have an account?</Text>
             <TouchableOpacity>
-              <Text style={styles.signupButtonText} onPress={handleSignup}>Sign Up</Text>
+              <Text
+                style={styles.signupButtonText}
+                onPress={() => navigation.navigate("Signup")}
+              >
+                Sign Up
+              </Text>
             </TouchableOpacity>
           </View>
-        </ScrollView>
-      </KeyboardAvoidingView>
+        </View>
+
+        {/* Dialog */}
+        <Portal>
+          <Dialog visible={dialogVisible} onDismiss={hideDialog}>
+            <Dialog.Icon icon="check-circle" color="#68C2FF" />
+            <Dialog.Title style={styles.dialogTitle}>Success</Dialog.Title>
+            <Dialog.Content style={styles.dialogContent}>
+              <Text style={styles.dialogText}>Logged in successfully!</Text>
+            </Dialog.Content>
+            <Dialog.Actions style={styles.dialogActions}>
+              <TouchableOpacity onPress={hideDialog} style={styles.dialogButton}>
+                <Text style={styles.dialogButtonText}>Done</Text>
+              </TouchableOpacity>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+      </View>
     </SafeAreaView>
   );
 }
@@ -163,98 +229,149 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
+    flexDirection: "column",
   },
-  scrollContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  logoContainer: {
-    flexDirection: 'column',
-    alignItems: 'center',
-    width: '100%',
-    justifyContent: 'center',
+  backgroundContainer: {
+    height: "30%", // Set fixed height for the background image
+    width: "100%",
+    justifyContent: "center",
+    alignItems: "center",
   },
   loginPawImage: {
-    height: 250,
-    width: 760,
+    flex: 1,
+    resizeMode: "cover",
+    justifyContent: "center",
+    width: "130%",
+  },
+  textOverlayContainer: {
+    position: "absolute",
+    top: "40%", // Adjust this to control vertical alignment
+    width: "100%",
+    justifyContent: "center",
   },
   welcomeBackText: {
     fontSize: 50,
-    fontFamily: 'Lilita',
-    color: '#68C2FF',
-    marginTop: -20,
+    fontFamily: "Lilita",
+    color: "#68C2FF",
+    textAlign: "center",
+    marginTop: 100,
   },
   loginText: {
-    fontFamily: 'Lato',
+    fontFamily: "Lato",
     fontSize: 18,
     marginTop: 10,
-    marginBottom: 40,
+    textAlign: "center",
   },
   formContainer: {
-    width: '100%',
-    alignItems: 'center',
-    marginTop: 20,
+    flex: 1, // Take the remaining space after the background container
+    width: "100%",
+    alignItems: "center",
+    marginTop: 80,
   },
   inputContainer: {
-    width: '90%',
+    width: "90%",
   },
   input: {
-    backgroundColor: '#F3F3F3',
+    backgroundColor: "#F3F3F3",
+    marginBottom: 20,
   },
   errorText: {
-    backgroundColor: '#FFEEED',
+    color: "red",
+    fontSize: 12,
+    marginTop: -10,
     marginBottom: 10,
   },
   rememberForgotContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    width: '90%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
+    width: "90%",
     marginTop: -10,
   },
   rememberCheck: {
-    flexDirection: 'row',
-    alignItems: 'center',
+    flexDirection: "row",
+    alignItems: "center",
   },
   checkboxContainer: {
     marginLeft: -8,
   },
   rememberText: {
-    fontFamily: 'Lato',
-    color: 'gray',
+    fontFamily: "Lato",
+    color: "gray",
   },
   forgotText: {
-    fontFamily: 'Lato',
-    color: 'gray',
+    fontFamily: "Lato",
+    color: "gray",
   },
   loginButton: {
-    width: '90%',
-    backgroundColor: '#EF5B5B',
+    width: "90%",
+    backgroundColor: "#EF5B5B",
     marginTop: 40,
     height: 50,
-    alignItems: 'center',
-    justifyContent: 'center',
+    alignItems: "center",
+    justifyContent: "center",
     borderRadius: 30,
   },
   loginButtonText: {
-    fontFamily: 'Lato',
+    fontFamily: "Lato",
     fontSize: 16,
-    color: 'white',
+    color: "white",
   },
   noAccountContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    width: '90%',
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    width: "100%",
     marginTop: 20,
     paddingHorizontal: 100,
   },
   noAccountText: {
-    fontFamily: 'Lato',
+    fontFamily: "Lato",
   },
   signupButtonText: {
-    fontFamily: 'Lato',
-    color: 'gray',
+    fontFamily: "Lato",
+    color: "gray",
     marginLeft: 10,
+  },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  loadingText: {
+    fontSize: 20,
+    fontFamily: "Lato",
+  },
+  //dialog
+  dialogTitle: {
+    textAlign: "center",  // Center align the title
+    fontFamily: 'Lato',
+    fontSize: 30,
+  },
+  dialogContent: {
+    alignItems: "center",  // Center align the content
+    justifyContent: "center",  // Center vertically
+  },
+  dialogText: {
+    textAlign: "center",  
+    fontSize: 15,
+  },
+  dialogActions: {
+    justifyContent: "center",  // Center align the actions (button)
+    alignItems: "center",  // Center horizontally
+  },
+  dialogButton: {
+    backgroundColor: '#68C2FF',  // Set the background color
+    width: 150,  // Set the width of the button
+    height: 50,  // Set the height of the button
+    borderRadius: 25,  // Set the border radius for rounded corners
+    justifyContent: 'center',  // Center align text inside button
+    alignItems: 'center',  // Center align text inside button
+  },
+  dialogButtonText: {
+    textAlign: "center",  
+    fontSize: 15,
+    color: 'white',
+    fontFamily: 'Lato',
   },
 });
