@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, } from 'react';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { MD3LightTheme as DefaultTheme, PaperProvider } from 'react-native-paper';
 import { NavigationContainer } from '@react-navigation/native';
@@ -27,20 +27,12 @@ const theme = {
 };
 
 export default function App() {
-  const [isLoading, setIsLoading] = useState(true);
   const [fontsLoaded] = useFonts({
     'Lilita': require('./assets/fonts/LilitaOne-Regular.ttf'),
     'Lato': require('./assets/fonts/Lato-Semibold.ttf'),
   });
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
+  // Prevent splash screen from hiding automatically
   useEffect(() => {
     async function prepare() {
       if (fontsLoaded) {
@@ -52,57 +44,50 @@ export default function App() {
   }, [fontsLoaded]);
 
   if (!fontsLoaded) {
-    return null; // Optionally add a loading indicator here
+    return null; // Optionally add a loading indicator here while fonts load
   }
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
       <PaperProvider theme={theme}>
         <NavigationContainer>
-
           <Stack.Navigator initialRouteName="Splash">
-            {isLoading ? (
-              <Stack.Screen
-                name="Splash"
-                component={Splash}
-                options={{ headerShown: false }}
-              />
-            ) : (
-              <>
-                <Stack.Screen
-                  name="Login"
-                  component={Login}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="Signup"
-                  component={Signup}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="Options"
-                  component={Options}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="Preferences"
-                  component={Preferences}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="Lifestyle"
-                  component={Lifestyle}
-                  options={{ headerShown: false }}
-                />
-                <Stack.Screen
-                  name="Main"
-                  component={Main}
-                  options={{ headerShown: false }}
-                />
-              </>
-            )}
+            <Stack.Screen
+              name="Splash"
+              component={Splash}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Login"
+              component={Login}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Signup"
+              component={Signup}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Options"
+              component={Options}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Preferences"
+              component={Preferences}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Lifestyle"
+              component={Lifestyle}
+              options={{ headerShown: false }}
+            />
+            <Stack.Screen
+              name="Main"
+              component={Main}
+              options={{ headerShown: false }}
+            />
           </Stack.Navigator>
-
         </NavigationContainer>
       </PaperProvider>
     </GestureHandlerRootView>
