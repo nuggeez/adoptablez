@@ -1,15 +1,13 @@
 import * as React from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, } from 'react-native';
-import { useTheme } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams  } from 'expo-router';
 
 export default function Options({ route }) {
-  const theme = useTheme();
   const router = useRouter();
   
-  // Safely retrieve 'userName' from route params or use a fallback string
-  const { userName } = route?.params || { userName: "User" }; // Default to "User" if no name is passed
+  // Use useLocalSearchParams to access local search params
+  const { userName } = useLocalSearchParams(); // Retrieves 'userName' from search params
 
   const handleAdopt = () => {
     router.push("Lifestyle");
@@ -22,7 +20,7 @@ export default function Options({ route }) {
   return (
     <SafeAreaView style={styles.safeArea}>
       <View style={styles.container}>
-        <Text style={styles.greetingsText}>Hello, {userName}!</Text>
+        <Text style={styles.greetingsText}>Hello, {userName || "User"}!</Text>
         <Text style={styles.questionText}>Are you an adopter or looking to adopt?</Text>
 
         <View style={styles.answerButtonsContainer}>

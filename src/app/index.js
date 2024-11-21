@@ -5,8 +5,6 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native'; // For navigation
 import * as SplashScreen from 'expo-splash-screen';
 
-const { width, height } = Dimensions.get('window'); // Get screen dimensions
-
 const Splash = () => {
   const theme = useTheme();
   const navigation = useNavigation(); // Hook to handle navigation
