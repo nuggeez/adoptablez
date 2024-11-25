@@ -1,35 +1,36 @@
-import * as React from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, } from 'react-native';
-import Slider from '@react-native-community/slider';
-import { useTheme } from 'react-native-paper';
-import { SafeAreaView } from 'react-native-safe-area-context';
-import { useRouter } from 'expo-router';
-import Icon from 'react-native-vector-icons/Ionicons';
+import * as React from "react";
+import { View, Text, StyleSheet, TouchableOpacity } from "react-native";
+import Slider from "@react-native-community/slider";
+import { useTheme } from "react-native-paper";
+import { SafeAreaView } from "react-native-safe-area-context";
+import { useRouter } from "expo-router";
+import Icon from "react-native-vector-icons/Ionicons";
+import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
+import Foundation from "@expo/vector-icons/Foundation";
 
 export default function Preferences() {
   const theme = useTheme();
   const router = useRouter();
 
-  // State to track selected buttons
-  const [petSize, setPetSize] = React.useState(9);  
-  const [personality, setPersonality] = React.useState(50);  
-  const [selectedPet, setSelectedPet] = React.useState(null); 
-  const [selectedGender, setSelectedGender] = React.useState(null); 
+  const [petSize, setPetSize] = React.useState(9);
+  const [personality, setPersonality] = React.useState(50);
+  const [selectedPet, setSelectedPet] = React.useState(null);
+  const [selectedGender, setSelectedGender] = React.useState(null);
 
   const handleFindPet = () => {
-    router.push('Main');
+    router.push("Main");
   };
 
-    // Back button handler
   const handleGoBack = () => {
     router.back();
   };
 
   return (
     <SafeAreaView style={styles.safeArea}>
-      <View style={[styles.container, { backgroundColor: theme.colors.primary }]}>
-
-         {/* Back Button */}
+      <View
+        style={[styles.container, { backgroundColor: theme.colors.primary }]}
+      >
+        {/* Back Button */}
         <TouchableOpacity style={styles.backButton} onPress={handleGoBack}>
           <View style={styles.backButtonContainer}>
             <Icon name="arrow-back" size={24} color="#fff" />
@@ -37,26 +38,58 @@ export default function Preferences() {
         </TouchableOpacity>
 
         <Text style={styles.signupText}>Nice to meet you User,</Text>
-        <Text style={styles.titleText}>We'll help you find the right pet for you!</Text>
+        <Text style={styles.titleText}>
+          We'll help you find the right pet for you!
+        </Text>
 
         {/* Pet Selection */}
-        <Text style={styles.optionText}>Which pet do you want to adopt?</Text>
+        <Text style={styles.optionText}>Select Pet</Text>
         <View style={styles.petSelection}>
           <TouchableOpacity
             style={[
               styles.petButton,
-              selectedPet === 'cat' && { borderColor: '#68C2FF' }, // Apply blue border when selected
+              selectedPet === "cat" && styles.selectedButton,
             ]}
-            onPress={() => setSelectedPet('cat')}>
-            <Text style={styles.petButtonText}>🐱 Cat</Text>
+            onPress={() => setSelectedPet("cat")}
+          >
+            <View style={styles.buttonContent}>
+              <MaterialCommunityIcons
+                name="cat"
+                size={24}
+                color={selectedPet === "cat" ? "#68C2FF" : "gray"}
+              />
+              <Text
+                style={[
+                  styles.petButtonText,
+                  selectedPet === "cat" && styles.selectedText,
+                ]}
+              >
+                Cat
+              </Text>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.petButton,
-              selectedPet === 'dog' && { borderColor: '#68C2FF' }, // Apply blue border when selected
+              selectedPet === "dog" && styles.selectedButton,
             ]}
-            onPress={() => setSelectedPet('dog')}>
-            <Text style={styles.petButtonText}>🐶 Dog</Text>
+            onPress={() => setSelectedPet("dog")}
+          >
+            <View style={styles.buttonContent}>
+              <MaterialCommunityIcons
+                name="dog"
+                size={24}
+                color={selectedPet === "dog" ? "#68C2FF" : "gray"}
+              />
+              <Text
+                style={[
+                  styles.petButtonText,
+                  selectedPet === "dog" && styles.selectedText,
+                ]}
+              >
+                Dog
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -66,18 +99,48 @@ export default function Preferences() {
           <TouchableOpacity
             style={[
               styles.genderButton,
-              selectedGender === 'female' && { borderColor: '#68C2FF' }, // Apply blue border when selected
+              selectedGender === "female" && styles.selectedButton,
             ]}
-            onPress={() => setSelectedGender('female')}>
-            <Text style={styles.genderButtonText}>♀️ Female</Text>
+            onPress={() => setSelectedGender("female")}
+          >
+            <View style={styles.buttonContent}>
+              <Foundation
+                name="female-symbol"
+                size={24}
+                color={selectedGender === "female" ? "#68C2FF" : "gray"}
+              />
+              <Text
+                style={[
+                  styles.genderButtonText,
+                  selectedGender === "female" && styles.selectedText,
+                ]}
+              >
+                Female
+              </Text>
+            </View>
           </TouchableOpacity>
           <TouchableOpacity
             style={[
               styles.genderButton,
-              selectedGender === 'male' && { borderColor: '#68C2FF' }, // Apply blue border when selected
+              selectedGender === "male" && styles.selectedButton,
             ]}
-            onPress={() => setSelectedGender('male')}>
-            <Text style={styles.genderButtonText}>♂️ Male</Text>
+            onPress={() => setSelectedGender("male")}
+          >
+            <View style={styles.buttonContent}>
+              <Foundation
+                name="male-symbol"
+                size={24}
+                color={selectedGender === "male" ? "#68C2FF" : "gray"}
+              />
+              <Text
+                style={[
+                  styles.genderButtonText,
+                  selectedGender === "male" && styles.selectedText,
+                ]}
+              >
+                Male
+              </Text>
+            </View>
           </TouchableOpacity>
         </View>
 
@@ -95,39 +158,42 @@ export default function Preferences() {
           thumbTintColor="#68C2FF"
         />
         <View style={styles.sliderLabelsContainer}>
-        <View>
-          <Text style={styles.labelText}>Small</Text>
-          <Text style={styles.sliderText}>{petSize} kg</Text>
+          <View>
+            <Text style={styles.labelText}>Small</Text>
+            <Text style={styles.sliderText}>{petSize} kg</Text>
+          </View>
+          <View>
+            <Text style={styles.labelText}>Large</Text>
+            <Text style={styles.sliderText}>23 kg above</Text>
+          </View>
         </View>
-        <View>
-          <Text style={styles.labelText}>Large</Text>
-          <Text style={styles.sliderText}>23 kg above</Text>
-        </View>
-      </View>
 
-
-      {/* Personality Slider */}
-        <Text style={styles.optionText}>What type of personality do you prefer in a pet?</Text>
-          <Slider
-            style={styles.slider}
-            minimumValue={0}
-            maximumValue={100}
-            step={1}
-            value={personality}
-            onValueChange={setPersonality}
-            minimumTrackTintColor="#68C2FF"
-            maximumTrackTintColor="#d3d3d3"
-            thumbTintColor="#68C2FF"
-          />
+        {/* Personality Slider */}
+        <Text style={styles.optionText}>
+          What type of personality do you prefer in a pet?
+        </Text>
+        <Slider
+          style={styles.slider}
+          minimumValue={0}
+          maximumValue={100}
+          step={1}
+          value={personality}
+          onValueChange={setPersonality}
+          minimumTrackTintColor="#68C2FF"
+          maximumTrackTintColor="#d3d3d3"
+          thumbTintColor="#68C2FF"
+        />
         <View style={styles.sliderLabelsContainer}>
           <Text style={styles.labelText}>Calm</Text>
           <Text style={styles.labelText}>Playful</Text>
         </View>
 
-
         {/* Find Pet Button */}
         <View style={styles.findPetContainer}>
-          <TouchableOpacity style={styles.findPetButton} onPress={handleFindPet}>
+          <TouchableOpacity
+            style={styles.findPetButton}
+            onPress={handleFindPet}
+          >
             <Text style={styles.findPetButtonText}>Find My Pet</Text>
           </TouchableOpacity>
         </View>
@@ -140,141 +206,162 @@ const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
     backgroundColor: "#fff",
-    alignItems: 'center',
+    alignItems: "center",
     paddingTop: 20,
   },
   container: {
     flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%",
     padding: 20,
   },
-    backButton: {
-    position: 'absolute',
+  backButton: {
+    position: "absolute",
     top: 20,
     left: 20,
     zIndex: 10,
   },
   backButtonContainer: {
-    backgroundColor: 'gray', 
+    backgroundColor: "gray",
     borderRadius: 25,
     padding: 10,
   },
   signupText: {
     fontSize: 16,
-    color: 'gray',
-    textAlign: 'left',
-    alignSelf: 'flex-start',
+    color: "gray",
+    textAlign: "left",
+    alignSelf: "flex-start",
     marginRight: 20,
     marginTop: 60,
   },
   titleText: {
     fontSize: 24,
-    fontWeight: 'bold',
+    fontWeight: "bold",
     marginBottom: 20,
-    color: '#68C2FF',
-    textAlign: 'left', 
-    alignSelf: 'flex-start', 
+    color: "#68C2FF",
+    textAlign: "left",
+    alignSelf: "flex-start",
     marginRight: 20,
     marginTop: 10,
   },
   optionText: {
     fontSize: 16,
     marginBottom: 8,
-    color: '#555',
-    textAlign: 'left', 
-    alignSelf: 'flex-start', 
+    color: "#555",
+    textAlign: "left",
+    alignSelf: "flex-start",
     marginRight: 20,
   },
   petSelection: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    width: "100%",
     marginBottom: 20,
   },
   petButton: {
-    backgroundColor: 'white',
-    width: '40%', 
-    height: 35, 
-    marginTop: 20, 
-    justifyContent: 'center', 
-    borderRadius: 10, 
+    backgroundColor: "white",
+    width: "40%",
+    height: 35,
+    marginTop: 20,
+    justifyContent: "center",
+    borderRadius: 10,
     marginHorizontal: 10,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
   },
   petButtonText: {
-    color: 'gray',
+    color: "gray",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
+    marginLeft: 10,
   },
   genderSelection: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    width: '100%',
+    flexDirection: "row",
+    justifyContent: "space-evenly",
+    width: "100%",
     marginBottom: 20,
   },
   genderButton: {
-    backgroundColor: 'white',
-    width: '40%', 
-    height: 35, 
-    marginTop: 20, 
-    justifyContent: 'center', 
-    borderRadius: 10, 
+    backgroundColor: "white",
+    width: "40%",
+    height: 35,
+    marginTop: 20,
+    justifyContent: "center",
+    borderRadius: 10,
     marginHorizontal: 10,
-    borderColor: 'gray',
+    borderColor: "gray",
     borderWidth: 1,
   },
   genderButtonText: {
-    color: 'gray',
+    color: "gray",
     fontSize: 16,
-    textAlign: 'center',
+    textAlign: "center",
+    marginLeft: 10,
   },
   slider: {
-    width: '80%',
+    width: "80%",
     marginTop: 5,
     marginBottom: 1,
   },
   sliderText: {
     fontSize: 15,
-    color: 'gray',
+    color: "gray",
   },
   sliderLabelsContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center', 
-    width: '80%',
-    marginTop: 10, 
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
+    width: "80%",
+    marginTop: 10,
     marginBottom: 30,
   },
   labelGroup: {
-    alignItems: 'center',
+    alignItems: "center",
   },
   labelText: {
     fontSize: 13,
-    color: 'gray',
+    color: "gray",
   },
   kgText: {
     fontSize: 13,
-    color: '#555',
+    color: "#555",
     marginTop: 4,
-  },  
+  },
   findPetContainer: {
-    width: '100%',
-    alignItems: 'center',
+    width: "100%",
+    alignItems: "center",
   },
   findPetButton: {
-    backgroundColor: '#FF7A68',
-    width: '90%',
+    backgroundColor: "#FF7A68",
+    width: "90%",
     height: 45,
-    justifyContent: 'center',
+    justifyContent: "center",
     borderRadius: 20,
     marginTop: 20,
   },
   findPetButtonText: {
     fontSize: 18,
-    textAlign: 'center',
-    color: 'white',
+    textAlign: "center",
+    color: "white",
+  },
+  buttonContent: {
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+  },
+  selectedButton: {
+    borderColor: "#68C2FF",
+    borderWidth: 2,
+  },
+  selectedText: {
+    color: "#68C2FF",
+  },
+  selectedGenderButton: {
+    borderColor: "#68C2FF",
+    borderWidth: 2,
+  },
+  selectedGenderText: {
+    color: "#68C2FF",
   },
 });
