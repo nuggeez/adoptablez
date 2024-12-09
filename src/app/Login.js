@@ -14,13 +14,10 @@ import {
   Portal,
 } from "react-native-paper";
 import { SafeAreaView } from "react-native-safe-area-context";
-import * as Font from "expo-font";
-import { useFocusEffect } from "@react-navigation/native"; // Import useFocusEffect
 import { useRouter } from 'expo-router';
 
-export default function Login({ navigation }) {
+export default function Login({ }) {
   const theme = useTheme();
-  const [fontsLoaded, setFontsLoaded] = useState(false);
 
   const router = useRouter();
   const [email, setEmail] = useState("");
@@ -33,31 +30,6 @@ export default function Login({ navigation }) {
     email: "",
     password: "",
   });
-
-  useEffect(() => {
-    const loadFonts = async () => {
-      await Font.loadAsync({
-        Lilita: require("../assets/fonts/LilitaOne-Regular.ttf"),
-      });
-      setFontsLoaded(true);
-    };
-    loadFonts();
-  }, []);
-
-  useFocusEffect(
-    React.useCallback(() => {
-      // Reset errors when the screen is focused
-      setErrors({ email: "", password: "" });
-    }, [])
-  );
-
-  if (!fontsLoaded) {
-    return (
-      <View style={styles.loadingContainer}>
-        <Text style={styles.loadingText}>Loading...</Text>
-      </View>
-    );
-  }
 
   const validateInputs = () => {
     let valid = true;
