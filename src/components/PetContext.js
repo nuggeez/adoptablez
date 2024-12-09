@@ -48,7 +48,7 @@ export const PetProvider = ({ children }) => {
   };
 
   return (
-    <PetContext.Provider value={{ pets, filteredPets, setPets, addPet, applyFilters }}>
+    <PetContext.Provider value={{ pets, filteredPets, setPets, addPet, applyFilters, setFilteredPets }}>
       {children}
     </PetContext.Provider>
   );
