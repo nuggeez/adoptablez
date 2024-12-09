@@ -26,10 +26,26 @@ const FeedHeader = ({ setFilteredPets }) => {
         Alert.alert("Permission to access location was denied");
         return;
       }
+  
+      // Get coordinates
       let locationData = await Location.getCurrentPositionAsync({});
       setLocation(locationData);
+  
+      // Reverse geocode to get human-readable address
+      let address = await Location.reverseGeocodeAsync({
+        latitude: locationData.coords.latitude,
+        longitude: locationData.coords.longitude,
+      });
+  
+      if (address.length > 0) {
+        setLocation({
+          city: address[0].city,
+          region: address[0].region,
+          country: address[0].country,
+        });
+      }
     };
-
+  
     getLocation();
   }, []);
 
@@ -60,7 +76,7 @@ const FeedHeader = ({ setFilteredPets }) => {
         <Icon name="location-on" size={20} color="#EF5B5B" />
         <Text style={styles.locationText}>
           {location
-            ? 'Lat: ${location.coords.latitude}, Long: ${location.coords.longitude}'
+            ? `${location.city}, ${location.region}, ${location.country}`
             : "Loading location..."}
         </Text>
       </View>
