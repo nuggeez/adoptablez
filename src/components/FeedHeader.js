@@ -7,6 +7,7 @@ import { usePets } from './PetContext';  // Import the context
 
 const FeedHeader = ({ setFilteredPets }) => {
   // State for dropdown and filter options
+  const [searchQuery, setSearchQuery] = useState("");
   const [modalVisible, setModalVisible] = useState(false);
   const [selectedGender, setSelectedGender] = useState("");
   const [selectedAge, setSelectedAge] = useState("");
@@ -49,6 +50,23 @@ const FeedHeader = ({ setFilteredPets }) => {
     getLocation();
   }, []);
 
+  // Debounce search functionality
+  useEffect(() => {
+    const filterPets = () => {
+      if (searchQuery.trim() === "") {
+        setFilteredPets(pets);
+      } else {
+        const filtered = pets.filter((pet) =>
+          pet.petName.toLowerCase().includes(searchQuery.toLowerCase()) // Ensure case-insensitivity
+        );
+        setFilteredPets(filtered);
+      }
+    };
+  
+    const timeoutId = setTimeout(filterPets, 300); // Debounce
+    return () => clearTimeout(timeoutId); // Cleanup timeout
+  }, [searchQuery, pets, setFilteredPets]);
+
   // Handle filter button click
   const handleFilterClick = () => {
     setModalVisible(true);
@@ -84,15 +102,16 @@ const FeedHeader = ({ setFilteredPets }) => {
       {/* Title */}
       <Text style={styles.title}>Discover Pets Looking for Homes</Text>
 
-      {/* Search Bar */}
       <View style={styles.searchBar}>
         <Icon name="search" size={24} color="#444444" style={styles.searchIcon} />
         <TextInput
           style={styles.searchInput}
           placeholder="Search"
           placeholderTextColor="#C2C2C2"
+          value={searchQuery}
+          onChangeText={setSearchQuery} // Update search query
         />
-        <TouchableOpacity onPress={handleFilterClick} style={styles.filterButton}>
+        <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.filterButton}>
           <Icon name="filter-list" size={24} color="#444" />
         </TouchableOpacity>
       </View>
