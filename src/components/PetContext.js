@@ -49,11 +49,16 @@ export const PetProvider = ({ children }) => {
       filtered = filtered.filter((pet) => pet.petType === filters.petType);
     }
   
-    if (filters.price) {
-      filtered = filtered.filter((pet) => Number(pet.price) <= Number(filters.price));
+     // Adoption fee filter
+     if (filters.adoptionFee) {
+      const [min, max] = filters.adoptionFee.split('-').map(Number);
+      filtered = filtered.filter((pet) => {
+          const petFee = Number(pet.petAdoptionFee);
+          return petFee >= min && petFee <= max;
+        });
     }
 
-    setFilteredPets(filtered); // Update filtered pets list
+    setFilteredPets(filtered);  // Update filtered pets list
   };
 
   return (
