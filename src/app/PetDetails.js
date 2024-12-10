@@ -14,6 +14,8 @@ const PetDetails = () => {
     petDescription,
     petIllnessHistory,
     petVaccinated,
+    petType, // Add petType
+    adoptionFee, // Add adoptionFee
     images,
     username,
     profileImage,
@@ -69,6 +71,18 @@ const PetDetails = () => {
               .join(" • ")}
           </Text>
           <Text style={styles.description}>{petDescription}</Text>
+
+          {/* Pet Type */}
+          <Text style={styles.sectionTitle}>Pet Type:</Text>
+          <Text style={styles.bulletText}>{petType}</Text>
+
+          {/* Adoption Fee */}
+          <Text style={styles.sectionTitle}>Adoption Fee:</Text>
+          <Text style={styles.bulletText}>
+            {adoptionFee ? `${adoptionFee}` : "Contact for adoption fee"}
+          </Text>
+
+          {/* Health History */}
           <Text style={styles.sectionTitle}>Health History:</Text>
           <View>
             <Text style={styles.bulletText}>
