@@ -39,9 +39,18 @@ export const PetProvider = ({ children }) => {
     }
 
     if (filters.vaccinated !== null) {
+      // This is the updated logic for the vaccinated filter
       filtered = filtered.filter(
         (pet) => pet.petVaccinated === filters.vaccinated
       );
+    }
+
+    if (filters.petType) {
+      filtered = filtered.filter((pet) => pet.petType === filters.petType);
+    }
+  
+    if (filters.price) {
+      filtered = filtered.filter((pet) => Number(pet.price) <= Number(filters.price));
     }
 
     setFilteredPets(filtered); // Update filtered pets list
