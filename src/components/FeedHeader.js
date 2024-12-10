@@ -84,6 +84,15 @@ const FeedHeader = ({ setFilteredPets }) => {
 
     applyFilters(filters);  // Call applyFilters from context
 
+  // Reset all the filter states after applying the filters
+  setSelectedGender(""); // Reset gender filter
+  setSelectedAge(""); // Reset age filter
+  setSelectedWeight(""); // Reset weight filter
+  setSelectedPersonality([]); // Reset personality filter
+  setVaccinated(null); // Reset vaccinated filter
+
+    applyFilters(filters);  // Call applyFilters from context
+
     setModalVisible(false);  // Close modal after applying filters
   };
 
@@ -121,17 +130,22 @@ const FeedHeader = ({ setFilteredPets }) => {
         <View style={styles.modalContainer}>
           <Text style={styles.modalTitle}>Filter Pets</Text>
 
-          {/* Gender Filter */}
-          <Text style={styles.modalText}>Gender</Text>
           <Picker
-            selectedValue={selectedGender}
-            onValueChange={(itemValue) => setSelectedGender(itemValue)}
-            style={styles.picker}
-          >
-            <Picker.Item label="Select Gender" value="" />
-            <Picker.Item label="Male" value="Male" />
-            <Picker.Item label="Female" value="Female" />
-          </Picker>
+          selectedValue={selectedGender}
+          onValueChange={(itemValue) => {
+            // If "Select Gender" is selected, reset the selectedGender to ""
+            if (itemValue === "") {
+              setSelectedGender(""); // Reset to initial state
+            } else {
+              setSelectedGender(itemValue); // Set selected gender
+            }
+          }}
+          style={styles.picker}
+        >
+          <Picker.Item label="Select Gender" value="" />
+          <Picker.Item label="Male" value="Male" />
+          <Picker.Item label="Female" value="Female" />
+        </Picker>
 
           {/* Other Filters (Age, Weight, Personality, Vaccinated) */}
           <Text style={styles.modalText}>Age (years)</Text>
@@ -169,8 +183,8 @@ const FeedHeader = ({ setFilteredPets }) => {
             style={styles.picker}
           >
             <Picker.Item label="Select Vaccinated Status" value={null} />
-            <Picker.Item label="Yes" value={true} />
-            <Picker.Item label="No" value={false} />
+            <Picker.Item label="Yes" value={false} />
+            <Picker.Item label="No" value={true} />
           </Picker>
 
           {/* Apply and Close Buttons */}
