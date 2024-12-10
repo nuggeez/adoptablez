@@ -14,6 +14,8 @@ const FeedHeader = ({ setFilteredPets }) => {
   const [selectedWeight, setSelectedWeight] = useState("");
   const [selectedPersonality, setSelectedPersonality] = useState([]);
   const [vaccinated, setVaccinated] = useState(null);
+  const [selectedAdoptionFee, setSelectedAdoptionFee] = useState(""); // Updated state for adoption fee
+  const [selectedPetType, setSelectedPetType] = useState(""); // Pet type filter (cat, dog)
   const [location, setLocation] = useState(null);
 
   // Get pet context values
@@ -80,6 +82,8 @@ const FeedHeader = ({ setFilteredPets }) => {
       weight: selectedWeight,
       personality: selectedPersonality,
       vaccinated: vaccinated,
+      adoptionFee: selectedAdoptionFee, // Updated filter for adoption fee
+      petType: selectedPetType, // Add pet type filter
     };
 
     applyFilters(filters);  // Call applyFilters from context
@@ -90,8 +94,9 @@ const FeedHeader = ({ setFilteredPets }) => {
   setSelectedWeight(""); // Reset weight filter
   setSelectedPersonality([]); // Reset personality filter
   setVaccinated(null); // Reset vaccinated filter
+  setSelectedAdoptionFee(""); // Reset adoption fee filter
+  setSelectedPetType(""); // Reset pet type filter
 
-    applyFilters(filters);  // Call applyFilters from context
 
     setModalVisible(false);  // Close modal after applying filters
   };
@@ -185,6 +190,28 @@ const FeedHeader = ({ setFilteredPets }) => {
             <Picker.Item label="Select Vaccinated Status" value={null} />
             <Picker.Item label="Yes" value={false} />
             <Picker.Item label="No" value={true} />
+          </Picker>
+
+          {/* Pet Type Filter */}
+          <Text style={styles.modalText}>Pet Type</Text>
+          <Picker
+            selectedValue={selectedPetType}
+            onValueChange={(itemValue) => setSelectedPetType(itemValue)}
+            style={styles.picker}
+          >
+            <Picker.Item label="Select Pet Type" value="" />
+            <Picker.Item label="Cat" value="Cat" />
+            <Picker.Item label="Dog" value="Dog" />
+          </Picker>
+
+          {/* Price Range Filter */}
+          <Text style={styles.modalText}>Adoption Fee Range (₱)</Text>
+          <Picker selectedValue={selectedAdoptionFee} onValueChange={setSelectedAdoptionFee} style={styles.picker}>
+            <Picker.Item label="Select Adoption Fee Range" value="" />
+            <Picker.Item label="₱100 - ₱199" value="100-199" />
+            <Picker.Item label="₱200 - ₱299" value="200-299" />
+            <Picker.Item label="₱300 - ₱399" value="300-399" />
+            <Picker.Item label="₱400 - ₱500" value="400-500" />
           </Picker>
 
           {/* Apply and Close Buttons */}
